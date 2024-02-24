@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AmmperService from '../api/ammper/Service';
-import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -22,12 +21,8 @@ export default function SignIn({userState}) {
 
   useEffect(() => {
     AmmperService.userAuthenticated()
-    .then(function(res) {
-      setUserAuth(true);
-    })
-    .catch(function(error) {
-      setUserAuth(false);
-    });
+    .then(() => setUserAuth(true))
+    .catch(() => setUserAuth(false));
   }, []);
 
   function handleSubmit(event) {
