@@ -5,38 +5,45 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { useEffect } from 'react';
+import AmmperService from '../api/ammper/Service';
+import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 
 
 function retrieveAccounts(event, bank) {
   event.preventDefault();
-  console.log(bank.date);
+  console.log(bank.name);
 }
 
-export default function Orders({rows}) {
+export default function Banks({userState}) {
+  const [userAuth, setUserAuth] = userState;
+  const [bankData, setBankData] = useState([]);
+  useEffect(() => {
+    AmmperService.listBanks().then((res) => setBankData(res.data));
+  }, []);
+
+  if (!userAuth)
+    return <Navigate to="/signin" />
+
   return (
     <React.Fragment>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
+            <TableCell>Bank ID</TableCell>
             <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
+          {bankData.map((bank) => (
+            <TableRow key={bank.bank_id}>
               <TableCell>
-              <Link color="primary" href="#" onClick={(e) => retrieveAccounts(e, row)} sx={{ mt: 3 }}>
-                {row.date}
+              <Link color="primary" href="#" onClick={(e) => retrieveAccounts(e, bank)} sx={{ mt: 3 }}>
+                {bank.bank_id}
               </Link>
               </TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`$${row.amount}`}</TableCell>
+              <TableCell>{bank.display_name}</TableCell>
             </TableRow>
           ))}
         </TableBody>
