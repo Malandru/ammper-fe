@@ -34,12 +34,12 @@ export default class AmmperService {
     }
 
     static sessionExists() {
-        return localStorage.getItem('auth');
+        return localStorage.getItem('auth') == 'true';
     }
 
     static updateSession(value, setUserAuth) {
-        setUserAuth(value);
         localStorage.setItem('auth', value);
+        setUserAuth(value);
     }
 
     static saveSession(value) {
