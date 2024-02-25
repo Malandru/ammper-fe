@@ -32,5 +32,18 @@ export default class AmmperService {
     static async userAuthenticated() {
         return await this.client.get(Endpoints.HOME);
     }
+
+    static sessionExists() {
+        return localStorage.getItem('auth');
+    }
+
+    static updateSession(value, setUserAuth) {
+        setUserAuth(value);
+        localStorage.setItem('auth', value);
+    }
+
+    static saveSession(value) {
+        localStorage.setItem('auth', value);
+    }
 }
 

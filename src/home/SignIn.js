@@ -12,17 +12,18 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AmmperService from '../api/ammper/Service';
 import { Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useState } from 'react';
 
 
 const defaultTheme = createTheme();
 
-export default function SignIn({userState}) {
-  const [userAuth, setUserAuth] = userState;
+export default function SignIn() {
+  const [userAuth, setUserAuth] = useState(false);
 
   useEffect(() => {
     AmmperService.userAuthenticated()
-    .then(() => setUserAuth(true))
-    .catch(() => setUserAuth(false));
+    .then(() => AmmperService.updateSession(true, setUserAuth))
+    .catch(() => AmmperService.updateSession(false, setUserAuth));
   }, []);
 
   function handleSubmit(event) {

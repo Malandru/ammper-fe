@@ -16,11 +16,11 @@ function retrieveAccounts(event, bank) {
   console.log(bank.name);
 }
 
-export default function Banks({userState}) {
-  const [userAuth, setUserAuth] = userState;
+export default function Banks() {
+  const [userAuth, setUserAuth] = useState(AmmperService.sessionExists());
   const [bankData, setBankData] = useState([]);
   useEffect(() => {
-    AmmperService.listBanks().then((res) => setBankData(res.data));
+    AmmperService.listBanks().then((res) => setBankData(res.data)).catch(() => AmmperService.updateSession(false, setUserAuth));
   }, []);
 
   if (!userAuth)
