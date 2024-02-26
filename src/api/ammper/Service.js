@@ -1,5 +1,6 @@
 import axios from "axios";
 import URLS from "../../Constants";
+import Cookies from "js-cookie";
 
 
 class Endpoints {
@@ -16,6 +17,11 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken=true;
+
+function getHeaders() {
+    const csrfToken = Cookies.get('csrftoken');
+    return {'X-CSRFToken': csrfToken}
+}
 
 export default class AmmperService {
     static client = axios.create({baseURL: URLS.AMMPER_BASE_URL});
@@ -37,11 +43,12 @@ export default class AmmperService {
     }
 
     static async listAccounts(bank) {
-        return await this.client.post(Endpoints.ACCOUNTS, bank)
+        
+        return await this.client.post(Endpoints.ACCOUNTS, bank, {headers: getHeaders()})
     }
 
     static async listTransactions(body) {
-        return await this.client.post(Endpoints.TRANSACTIONS, body);
+        return await this.client.post(Endpoints.TRANSACTIONS, body, {headers: getHeaders()});
     }
 
     static async userAuthenticated() {
