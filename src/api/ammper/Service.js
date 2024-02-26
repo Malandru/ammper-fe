@@ -23,7 +23,6 @@ function getHeaders() {
     console.log(csrfToken);
     return {
         "X-CSRFToken": csrfToken,
-        "Access-Control-Allow-Origin": "*",
     }
 }
 
