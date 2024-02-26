@@ -18,13 +18,6 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken=true;
 
-function getHeaders() {
-    const csrfToken = Cookies.get('csrftoken');
-    console.log(csrfToken);
-    return {
-        "X-CSRFToken": csrfToken,
-    }
-}
 
 export default class AmmperService {
     static client = axios.create({baseURL: URLS.AMMPER_BASE_URL});
@@ -42,16 +35,16 @@ export default class AmmperService {
     }
 
     static async listBanks() {
-        return await this.client.get(Endpoints.BANKS, {headers: getHeaders()});
+        return await this.client.get(Endpoints.BANKS);
     }
 
     static async listAccounts(bank) {
         
-        return await this.client.post(Endpoints.ACCOUNTS, bank, {headers: getHeaders()})
+        return await this.client.post(Endpoints.ACCOUNTS, bank)
     }
 
     static async listTransactions(body) {
-        return await this.client.post(Endpoints.TRANSACTIONS, body, {headers: getHeaders()});
+        return await this.client.post(Endpoints.TRANSACTIONS, body);
     }
 
     static async userAuthenticated() {
