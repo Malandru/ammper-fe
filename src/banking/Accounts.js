@@ -6,15 +6,18 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import NotFound from '../NotFound';
 import AmmperService from '../api/ammper/Service';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Link } from '@mui/material';
 import { useState } from 'react';
 import TransactionDialog from './TransactionDialog';
+import ErrorAPI from '../api/ErrorAPI';
 
 
 
 export default function Accounts() {
   const [dialogData, setDialogData] = useState({open: false});
+  const [error, setError] = useState();
+  const [accountData, setAccountData] = useState();
   const {state} = useLocation();
 
   function transactionsFetchable(bank) {
@@ -30,9 +33,24 @@ export default function Accounts() {
     setDialogData({open: false})
   }
 
+  function handleSumbitDialog (request) {
+    console.log(request);
+    AmmperService.listTransactions(request)
+    .then((res) => setAccountData(res.data))
+    .catch((res) => setError(res));
+  }
+
   if (state == null) {
     const userAuth = AmmperService.sessionExists();
     return <NotFound allowed={userAuth}/>
+  }
+
+  if (error) {
+    return <ErrorAPI response={error}/>
+  }
+
+  if (accountData) {
+    return <Navigate to='/transactions' state={accountData}/>
   }
 
   let accounts = state.accounts;
@@ -66,7 +84,7 @@ export default function Accounts() {
           ))}
         </TableBody>
       </Table>
-      <TransactionDialog data={dialogData} handleClose={handleCloseDialog}/>
+      <TransactionDialog data={dialogData} handleClose={handleCloseDialog} handleSubmit={handleSumbitDialog}/>
     </React.Fragment>
   );
 }

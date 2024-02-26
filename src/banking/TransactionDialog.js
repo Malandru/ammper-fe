@@ -6,10 +6,19 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { useState } from 'react';
 
 export default function TransactionDialog({data, handleClose, handleSubmit}) {
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const open = data.open;
-  const account = data.account;
+  const account = open ? data.account : {};
+
+  function disableFetchButton() {
+    return fromDate == null || toDate == null;
+  }
 
   return (
     <React.Fragment>
@@ -20,35 +29,42 @@ export default function TransactionDialog({data, handleClose, handleSubmit}) {
           component: 'form',
           onSubmit: (event) => {
             event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            const formJson = Object.fromEntries(formData.entries());
-            const email = formJson.email;
-            console.log(email);
-            handleClose();
+            const data = new FormData(event.currentTarget);
+            const request = {
+              link: account.link_id,
+              date_from: data.get('from_date'),
+              date_to: data.get('to_date'),
+              account: account.account_id,
+            }
+            handleSubmit(request);
+            setFromDate(null);
+            setToDate(null);
           },
         }}
       >
-        <DialogTitle>Subscribe</DialogTitle>
+        <DialogTitle>Fetch Transactions</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here. We
-            will send updates occasionally.
+            Please provide the following fields. 
           </DialogContentText>
           <TextField
-            autoFocus
-            required
+            id="account-name"
             margin="dense"
-            id="name"
-            name="email"
-            label="Email Address"
-            type="email"
             fullWidth
+            label="Account"
+            defaultValue={account.account_name}
+            InputProps={{readOnly: true}}
             variant="standard"
+            disabled
           />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker name='from_date' format='YYYY-MM-DD' value={fromDate} onChange={(date) => setFromDate(date)} label='From date'/>
+            <DatePicker name='to_date' format='YYYY-MM-DD' value={toDate} onChange={(date) => setToDate(date)} label='To date'/>
+          </LocalizationProvider>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Subscribe</Button>
+          <Button type="submit" disabled={disableFetchButton()}>Fetch</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>
