@@ -20,7 +20,11 @@ axios.defaults.withXSRFToken=true;
 
 function getHeaders() {
     const csrfToken = Cookies.get('csrftoken');
-    return {'X-CSRFToken': csrfToken}
+    console.log(csrfToken);
+    return {
+        "X-CSRFToken": csrfToken,
+        "Access-Control-Allow-Origin": "*",
+    }
 }
 
 export default class AmmperService {
@@ -39,7 +43,7 @@ export default class AmmperService {
     }
 
     static async listBanks() {
-        return await this.client.get(Endpoints.BANKS);
+        return await this.client.get(Endpoints.BANKS, {headers: getHeaders()});
     }
 
     static async listAccounts(bank) {
