@@ -8,6 +8,7 @@ import SignUp from './home/SignUp';
 import Banks from './banking/Banks';
 import Accounts from './banking/Accounts';
 import NotFound from './NotFound';
+import Transactions from './banking/Transactions';
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <Route path='/signin' element={<SignIn />} />
           <Route path='/signup' element={<SignUp />} />
           <Route path='/accounts' element={<Accounts />} />
+          <Route path='/transactions' element={<Transactions />} />
           <Route path='*' exact={true} element={<NotFound allowed={userAuth}/>}/>
         </Routes>
       </BrowserRouter>

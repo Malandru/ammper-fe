@@ -50,7 +50,7 @@ export default function Accounts() {
   }
 
   if (accountData) {
-    return <Navigate to='/transactions' state={accountData}/>
+    return <Navigate to='/transactions' state={{accountData}}/>
   }
 
   let accounts = state.accounts;

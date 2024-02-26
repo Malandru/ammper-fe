@@ -9,6 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { useState } from 'react';
+import dayjs from 'dayjs';
 
 export default function TransactionDialog({data, handleClose, handleSubmit}) {
   const [fromDate, setFromDate] = useState(null);
@@ -58,8 +59,8 @@ export default function TransactionDialog({data, handleClose, handleSubmit}) {
             disabled
           />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker name='from_date' format='YYYY-MM-DD' value={fromDate} onChange={(date) => setFromDate(date)} label='From date'/>
-            <DatePicker name='to_date' format='YYYY-MM-DD' value={toDate} onChange={(date) => setToDate(date)} label='To date'/>
+            <DatePicker name='from_date' format='YYYY-MM-DD' value={fromDate} onChange={(date) => setFromDate(date)} label='From date' maxDate={dayjs()}/>
+            <DatePicker name='to_date' format='YYYY-MM-DD' value={toDate} onChange={(date) => setToDate(date)} label='To date' maxDate={dayjs()} minDate={fromDate}/>
           </LocalizationProvider>
         </DialogContent>
         <DialogActions>
