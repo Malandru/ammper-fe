@@ -3,6 +3,7 @@ import URLS from "../../Constants";
 
 
 class Endpoints {
+    static REGISTER = '/member/register'
     static LOGIN = '/member/login';
     static LOGOUT = '/member/logout';
     static BANKS = '/banking/institutions';
@@ -18,6 +19,10 @@ axios.defaults.withXSRFToken=true;
 
 export default class AmmperService {
     static client = axios.create({baseURL: URLS.AMMPER_BASE_URL});
+
+    static async register(body) {
+        return await this.client.post(Endpoints.REGISTER, body);
+    }
 
     static async login(login_body) {
         return await this.client.post(Endpoints.LOGIN, login_body);
