@@ -2,6 +2,7 @@
   "name": "ammper-fe",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://3cz6lfp428.execute-api.us-east-2.amazonaws.com",
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
