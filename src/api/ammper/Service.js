@@ -6,6 +6,7 @@ class Endpoints {
     static LOGIN = '/member/login';
     static LOGOUT = '/member/logout';
     static BANKS = '/banking/institutions';
+    static ACCOUNTS = '/banking/accounts';
     static HOME = '/member/home';
 }
 
@@ -26,7 +27,11 @@ export default class AmmperService {
     }
 
     static async listBanks() {
-        return await this.client.get(Endpoints.BANKS)
+        return await this.client.get(Endpoints.BANKS);
+    }
+
+    static async listAccounts(bank) {
+        return await this.client.post(Endpoints.ACCOUNTS, bank)
     }
 
     static async userAuthenticated() {

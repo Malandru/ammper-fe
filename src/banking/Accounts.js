@@ -1,44 +1,72 @@
 import * as React from 'react';
-import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import NotFound from '../NotFound';
+import AmmperService from '../api/ammper/Service';
+import { useLocation } from 'react-router-dom';
+import { Link } from '@mui/material';
+import { useState } from 'react';
+import TransactionDialog from './TransactionDialog';
 
 
-function preventDefault(event) {
-  event.preventDefault();
-}
 
-export default function Orders({rows}) {
+export default function Accounts() {
+  const [dialogData, setDialogData] = useState({open: false});
+  const {state} = useLocation();
+
+  function transactionsFetchable(bank) {
+    return bank.resources.some(str => str === 'TRANSACTIONS')
+  }
+
+  function handleTransactionLink(event, account) {
+    event.preventDefault();
+    setDialogData({open: true, account})
+  }
+
+  function handleCloseDialog () {
+    setDialogData({open: false})
+  }
+
+  if (state == null) {
+    const userAuth = AmmperService.sessionExists();
+    return <NotFound allowed={userAuth}/>
+  }
+
+  let accounts = state.accounts;
+  let bank = state.bank;
+
   return (
     <React.Fragment>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
+            <TableCell>Account ID</TableCell>
             <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
+            <TableCell>Number</TableCell>
+            <TableCell>Bank</TableCell>
+            <TableCell>Transactions fetchable</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`$${row.amount}`}</TableCell>
+          {accounts.map((account) => (
+            <TableRow key={account.account_id}>
+              <TableCell>
+                <Link color="primary" href="#" onClick={(e) => handleTransactionLink(e, account)} sx={{ mt: 3 }}>
+                  {account.account_id}
+                </Link>
+              </TableCell>
+              <TableCell>{account.account_name}</TableCell>
+              <TableCell>{account.account_number}</TableCell>
+              <TableCell>{bank.display_name}</TableCell>
+              <TableCell>{transactionsFetchable(bank) ? "YES" : "NO"}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-        See more orders
-      </Link>
+      <TransactionDialog data={dialogData} handleClose={handleCloseDialog}/>
     </React.Fragment>
   );
 }

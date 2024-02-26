@@ -9,22 +9,41 @@ import { useEffect } from 'react';
 import AmmperService from '../api/ammper/Service';
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import ErrorAPI from '../api/ErrorAPI';
 
 
-function retrieveAccounts(event, bank) {
-  event.preventDefault();
-  console.log(bank.name);
-}
 
 export default function Banks() {
-  const [userAuth, setUserAuth] = useState(AmmperService.sessionExists());
+  // const [userAuth, setUserAuth] = useState(AmmperService.sessionExists());
   const [bankData, setBankData] = useState([]);
+  const [fetchData, setFetchData] = useState({fetched: false, error: false});
+
   useEffect(() => {
-    AmmperService.listBanks().then((res) => setBankData(res.data)).catch(() => AmmperService.updateSession(false, setUserAuth));
+    AmmperService.listBanks()
+    .then((res) => setBankData(res.data))
+    .catch((res) => setFetchData({error: res}));
   }, []);
 
-  if (!userAuth)
-    return <Navigate to="/signin" />
+  function retrieveAccounts(event, bank) {
+    event.preventDefault();
+    if(accountsFetchable(bank))
+      AmmperService.listAccounts(bank)
+      .then((res) => setFetchData({fetched: true, bank, accounts: res.data}))
+      .catch((res) => setFetchData({error: res}));
+  }
+
+  function accountsFetchable(bank) {
+    return bank.resources.some(str => str === 'ACCOUNTS')
+  }
+
+  // if (!userAuth)
+  //   return <Navigate to="/signin" />
+  
+  if (fetchData.error)
+    return <ErrorAPI response={fetchData.error} />
+  
+  if (fetchData.fetched)
+    return <Navigate to="/accounts" state={{bank: fetchData.bank, accounts: fetchData.accounts }}/>
 
   return (
     <React.Fragment>
@@ -33,6 +52,7 @@ export default function Banks() {
           <TableRow>
             <TableCell>Bank ID</TableCell>
             <TableCell>Name</TableCell>
+            <TableCell>Accounts fetchable</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -44,6 +64,7 @@ export default function Banks() {
               </Link>
               </TableCell>
               <TableCell>{bank.display_name}</TableCell>
+              <TableCell>{accountsFetchable(bank) ? "YES" : "NO"}</TableCell>
             </TableRow>
           ))}
         </TableBody>

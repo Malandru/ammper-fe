@@ -1,13 +1,13 @@
 import './App.css';
 import AmmperService from './api/ammper/Service';
 import { useState } from 'react';
-import { Alert, AppBar, Box, Button, Container, CssBaseline, Grid, Link, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
+import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import SignIn from './home/SignIn';
 import SignUp from './home/SignUp';
 import Banks from './banking/Banks';
-
-const defaultTheme = createTheme();
+import Accounts from './banking/Accounts';
+import NotFound from './NotFound';
 
 
 function App() {
@@ -33,6 +33,7 @@ function App() {
           <Route path='/' element={<HomePage />} />
           <Route path='/signin' element={<SignIn />} />
           <Route path='/signup' element={<SignUp />} />
+          <Route path='/accounts' element={<Accounts />} />
           <Route path='*' exact={true} element={<NotFound allowed={userAuth}/>}/>
         </Routes>
       </BrowserRouter>
@@ -49,38 +50,5 @@ function HomePage() {
     return <Navigate to="/signin" />;
 }
 
-
-function NotFound({allowed}) {
-  console.log(allowed);
-  return (
-  <ThemeProvider theme={defaultTheme}>
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-          {
-            allowed ? ( <div>
-              <Alert severity="warning">Page not found.</Alert>
-              <Link href="/" variant="body2">
-                Go to home page
-              </Link>
-            </div>
-            ): ( <div>
-              <Alert severity="error">Not allowed to access this page</Alert>
-              <Link href="/signin" variant="body2">
-                Please sign in
-              </Link></div>
-            )
-          }
-      </Box>
-    </Container>
-  </ThemeProvider>);
-}
 
 export default App;
